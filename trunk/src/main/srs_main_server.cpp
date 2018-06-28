@@ -55,7 +55,7 @@ ISrsLog* _srs_log = new SrsFastLog();
 ISrsThreadContext* _srs_context = new SrsThreadContext();
 // app module.
 SrsConfig* _srs_config = new SrsConfig();
-SrsServer* _srs_server = new SrsServer();
+SrsServer* _srs_server = new SrsServer();   // 创建srs server服务   
 // version of srs, which can grep keyword "XCORE"
 extern const char* _srs_version;
 
@@ -258,6 +258,7 @@ int main(int argc, char** argv)
 
     // for gperf gmp or gcp, 
     // should never enable it when not enabled for performance issue.
+// xfc 是否开启性能检查工具，gperf是谷歌开发的工具
 #ifdef SRS_AUTO_GPERF_MP
     HeapProfilerStart("gperf.srs.gmp");
 #endif
@@ -280,6 +281,7 @@ int main(int argc, char** argv)
     
     // never use srs log(srs_trace, srs_error, etc) before config parse the option,
     // which will load the log config and apply it.
+    // xfc 解析参数选项 _srs_config被初始化为全局变量。
     if ((ret = _srs_config->parse_options(argc, argv)) != ERROR_SUCCESS) {
         return ret;
     }
@@ -327,6 +329,7 @@ int main(int argc, char** argv)
     * and use initialize to create members, set hooks for instance the reload handler,
     * all initialize will done in this stage.
     */
+
     if ((ret = _srs_server->initialize(NULL)) != ERROR_SUCCESS) {
         return ret;
     }
@@ -336,7 +339,9 @@ int main(int argc, char** argv)
 
 int run()
 {
-    // if not deamon, directly run master.
+    // if not deamon, directly run master. 
+    // xfc deamon 是守护进程
+    // 是否配置了守护进程，这个暂时不看
     if (!_srs_config->get_deamon()) {
         return run_master();
     }

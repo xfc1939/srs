@@ -1329,17 +1329,20 @@ int SrsConfig::parse_options(int argc, char** argv)
     int ret = ERROR_SUCCESS;
     
     // argv
+    // xfc _argv 是一个std::string类型的私有变量
     for (int i = 0; i < argc; i++) {
         _argv.append(argv[i]);
         
+        // 在参数中插入" "来区分输入的参数
         if (i < argc - 1) {
-            _argv.append(" ");
+            _argv.append(" "); 
         }
     }
     
     // config
     show_help = true;
     for (int i = 1; i < argc; i++) {
+        // xfc 一个个参数开始解析 // 后续先不看了，先看重点
         if ((ret = parse_argv(i, argv)) != ERROR_SUCCESS) {
             return ret;
         }
@@ -1426,7 +1429,7 @@ int SrsConfig::parse_argv(int& i, char** argv)
     int ret = ERROR_SUCCESS;
     
     char* p = argv[i];
-        
+    // 首先判断前面是不是带有"-",如果没有则表示这个参数有问题，则需要显示帮助文档，然后返回，这些配置后续慢慢的看吧
     if (*p++ != '-') {
         show_help = true;
         return ret;

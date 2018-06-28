@@ -243,10 +243,12 @@ public:
     * for reload handler to register itself,
     * when config service do the reload, callback the handler.
     */
+    // 订阅
     virtual void subscribe(ISrsReloadHandler* handler);
     /**
     * for reload handler to unregister itself.
     */
+    // 取消订阅
     virtual void unsubscribe(ISrsReloadHandler* handler);
     /**
     * reload the config file.

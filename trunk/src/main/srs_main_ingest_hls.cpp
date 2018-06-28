@@ -55,6 +55,7 @@ int proxy_hls2rtmp(std::string hls, std::string rtmp);
 // never subscribe handler in constructor,
 // instead, subscribe handler in initialize method.
 // kernel module.
+// xfc 初始化一个日志服务，其中ISrsLog是一个接口类，针对不同的需求使用不同的日志类
 ISrsLog* _srs_log = new SrsFastLog();
 ISrsThreadContext* _srs_context = new ISrsThreadContext();
 // app module.
@@ -82,7 +83,7 @@ int main(int argc, char** argv)
     srs_error("donot support gmc/gmp/gcp/gprof");
     exit(-1);
 #endif
-    
+    // xfc ingest是摄取的意思
     srs_trace("srs_ingest_hls base on %s, to ingest hls live to srs", RTMP_SIG_SRS_SERVER);
     
     // parse user options.

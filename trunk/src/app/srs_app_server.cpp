@@ -488,6 +488,7 @@ SrsServer::SrsServer()
     signal_manager = NULL;
     
     handler = NULL;
+    // xfc 获取父进程的PID
     ppid = ::getppid();
     
     // donot new object in constructor,

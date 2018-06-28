@@ -181,7 +181,7 @@ bool srs_is_little_endian()
     // convert to network(big-endian) order, if not equals, 
     // the system is little-endian, so need to convert the int64
     static int little_endian_check = -1;
-    
+    // xfc 从这里检查是否是小端，如果已经检查了则无需再次检查
     if(little_endian_check == -1) {
         union {
             int32_t i;
