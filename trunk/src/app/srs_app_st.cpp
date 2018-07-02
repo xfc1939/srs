@@ -214,6 +214,7 @@ int srs_st_init()
     
     // Select the best event system available on the OS. In Linux this is
     // epoll(). On BSD it will be kqueue.
+    // xfc 这个代码里面无论怎样都会选择epoll事件系统
     if (st_set_eventsys(ST_EVENTSYS_ALT) == -1) {
         ret = ERROR_ST_SET_EPOLL;
         srs_error("st_set_eventsys use %s failed. ret=%d", st_get_eventsys_name(), ret);
@@ -221,6 +222,7 @@ int srs_st_init()
     }
     srs_trace("st_set_eventsys to %s", st_get_eventsys_name());
 
+    // xfc 完成一些io的初始化，修改一些限制
     if(st_init() != 0){
         ret = ERROR_ST_INITIALIZE;
         srs_error("st_init failed. ret=%d", ret);

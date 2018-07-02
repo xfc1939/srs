@@ -147,9 +147,10 @@ int SrsStreamListener::listen(string i, int p)
     ip = i;
     port = p;
 
+    // xfc 将之前分配过的tcp监听器先释放
     srs_freep(listener);
     listener = new SrsTcpListener(this, ip, port);
-
+    // 重新开始监听
     if ((ret = listener->listen()) != ERROR_SUCCESS) {
         srs_error("tcp listen failed. ret=%d", ret);
         return ret;
@@ -741,6 +742,7 @@ int SrsServer::listen()
 {
     int ret = ERROR_SUCCESS;
     
+    // 创建一个rtmp的监听器
     if ((ret = listen_rtmp()) != ERROR_SUCCESS) {
         return ret;
     }
@@ -1074,19 +1076,26 @@ int SrsServer::listen_rtmp()
     int ret = ERROR_SUCCESS;
     
     // stream service port.
+    // xfc 先获取流地址和端口
     std::vector<std::string> ip_ports = _srs_config->get_listens();
+    // xfc 断言一定有端口和ip地址
     srs_assert((int)ip_ports.size() > 0);
     
+    // xfc 关闭之前已经保存的rtmp请求
     close_listeners(SrsListenerRtmpStream);
     
     for (int i = 0; i < (int)ip_ports.size(); i++) {
+        // xfc 创建一个rtmp 流的监听器，SrsListener是一个监听器的抽象类，这里根据不同的类型创建出不同的监听器
         SrsListener* listener = new SrsStreamListener(this, SrsListenerRtmpStream);
+        // xfc 将监听器放入监听器队列中
         listeners.push_back(listener);
         
         std::string ip;
         int port;
+        // xfc 解析端口和ip
         srs_parse_endpoint(ip_ports[i], ip, port);
         
+        // xfc 开始监听
         if ((ret = listener->listen(ip, port)) != ERROR_SUCCESS) {
             srs_error("RTMP stream listen at %s:%d failed. ret=%d", ip.c_str(), port, ret);
             return ret;

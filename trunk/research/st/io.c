@@ -127,7 +127,7 @@ static _st_netfd_t *_st_netfd_new(int osfd, int nonblock, int is_socket)
 {
     _st_netfd_t *fd;
     int flags = 1;
-    
+    // xfc 这个fd_new针对不同的event系统有不同的实现，在epoll事件系统中，该函数是_st_epoll_fd_new
     if ((*_st_eventsys->fd_new)(osfd) < 0) {
         return NULL;
     }

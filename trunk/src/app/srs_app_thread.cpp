@@ -89,12 +89,12 @@ namespace internal {
     int SrsThread::start()
     {
         int ret = ERROR_SUCCESS;
-        
+        // xfc 判断线程是不是在运行中
         if(tid) {
             srs_info("thread %s already running.", _name);
             return ret;
         }
-        
+        // xfc 创建一个协程，其中thread_run是携程运行函数，这个函数为携程分配了一些栈空间
         if((tid = st_thread_create(thread_fun, this, (_joinable? 1:0), 0)) == NULL){
             ret = ERROR_ST_CREATE_CYCLE_THREAD;
             srs_error("st_thread_create failed. ret=%d", ret);
@@ -434,6 +434,7 @@ SrsReusableThread::~SrsReusableThread()
 
 int SrsReusableThread::start()
 {
+    // xfc 这里调用了SrsThread::start()函数
     return pthread->start();
 }
 

@@ -400,6 +400,7 @@ int run_master()
         return ret;
     }
     
+    // 开始进入监听函数，不同的链接请求由不同的监听
     if ((ret = _srs_server->listen()) != ERROR_SUCCESS) {
         return ret;
     }

@@ -207,7 +207,7 @@ int SrsTcpListener::fd()
 int SrsTcpListener::listen()
 {
     int ret = ERROR_SUCCESS;
-    
+    // xfc 创建监听套接字 socket
     if ((_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         ret = ERROR_SOCKET_CREATE;
         srs_error("create linux socket error. port=%d, ret=%d", port, ret);
@@ -227,27 +227,29 @@ int SrsTcpListener::listen()
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = inet_addr(ip.c_str());
+    // xfc 绑定套接字到一个ip和端口上
     if (bind(_fd, (const sockaddr*)&addr, sizeof(sockaddr_in)) == -1) {
         ret = ERROR_SOCKET_BIND;
         srs_error("bind socket error. ep=%s:%d, ret=%d", ip.c_str(), port, ret);
         return ret;
     }
     srs_verbose("bind socket success. ep=%s:%d, fd=%d", ip.c_str(), port, _fd);
-    
+    // 设置套接字为监听模式
     if (::listen(_fd, SERVER_LISTEN_BACKLOG) == -1) {
         ret = ERROR_SOCKET_LISTEN;
         srs_error("listen socket error. ep=%s:%d, ret=%d", ip.c_str(), port, ret);
         return ret;
     }
     srs_verbose("listen socket success. ep=%s:%d, fd=%d", ip.c_str(), port, _fd);
-    
+    // xfc 这里面是为_fd 对应的 epoll_fd_data 结构分配内存存储空间
     if ((_stfd = st_netfd_open_socket(_fd)) == NULL){
         ret = ERROR_ST_OPEN_SOCKET;
         srs_error("st_netfd_open_socket open socket failed. ep=%s:%d, ret=%d", ip.c_str(), port, ret);
         return ret;
     }
     srs_verbose("st open socket success. ep=%s:%d, fd=%d", ip.c_str(), port, _fd);
-    
+    // xfc 等到连接一个客户之后，开启一个新的线程
+    // xfc 这里调用了SrsReusableThread::start() 函数
     if ((ret = pthread->start()) != ERROR_SUCCESS) {
         srs_error("st_thread_create listen thread error. ep=%s:%d, ret=%d", ip.c_str(), port, ret);
         return ret;
