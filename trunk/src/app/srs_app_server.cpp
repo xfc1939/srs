@@ -1257,6 +1257,7 @@ int SrsServer::accept_client(SrsListenerType type, st_netfd_t client_stfd)
     // @see https://github.com/ossrs/srs/issues/518
     if (true) {
         int val;
+        // xfc 获取文件描述符的状态
         if ((val = fcntl(fd, F_GETFD, 0)) < 0) {
             ret = ERROR_SYSTEM_PID_GET_FILE_INFO;
             srs_error("fnctl F_GETFD error! fd=%d. ret=%#x", fd, ret);

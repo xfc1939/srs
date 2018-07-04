@@ -184,17 +184,21 @@ int SrsStSocket::writev(const iovec *iov, int iov_size, ssize_t* nwrite)
 
 #ifdef __linux__
 #include <sys/epoll.h>
-
+// 检测是否支持epoll
 bool srs_st_epoll_is_supported(void)
 {
     struct epoll_event ev;
 
+    // xfc 事件回调运行，检测对端写入事件
     ev.events = EPOLLIN;
     ev.data.ptr = NULL;
     /* Guaranteed to fail */
+    // xfc 注册要监听的事件类型
+    // epoll_ctl(int epfd, int op, int fd, epoll_event* event);
     epoll_ctl(-1, EPOLL_CTL_ADD, -1, &ev);
 
-    return (errno != ENOSYS);
+    // xfc 如果错误为函数未实现，说明不支持epoll
+    return (errno != ENOSYS);   
 }
 #endif
 
