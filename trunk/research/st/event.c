@@ -157,12 +157,13 @@ ST_HIDDEN int _st_epoll_fd_data_expand(int maxfd)
     while (maxfd >= n) {
         n <<= 1;
     }
-
+    // xfc 为该描述符分配内存
+    // xfc 改变这个fd_data的内存大小，后面是新的内存大小
     ptr = (_epoll_fd_data_t *)realloc(_st_epoll_data->fd_data, n * sizeof(_epoll_fd_data_t));
     if (!ptr) {
         return -1;
     }
-
+    // xfc 对新分配的内存进行一波初始化
     memset(ptr + _st_epoll_data->fd_data_size, 0, (n - _st_epoll_data->fd_data_size) * sizeof(_epoll_fd_data_t));
 
     _st_epoll_data->fd_data = ptr;
@@ -395,6 +396,7 @@ ST_HIDDEN void _st_epoll_dispatch(void)
 
 ST_HIDDEN int _st_epoll_fd_new(int osfd)
 {
+    // xfc 这里判断是否超出了fd描述符的最大范围，然后分配一个epoll_fd_data
     if (osfd >= _st_epoll_data->fd_data_size && _st_epoll_fd_data_expand(osfd) < 0) {
         return -1;
     }
