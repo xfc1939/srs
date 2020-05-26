@@ -899,10 +899,12 @@ int SrsIngestSrsOutput::parse_message_queue()
         std::multimap<int64_t, SrsTsMessage*>::iterator it = queue.begin();
         
         SrsTsMessage* msg = it->second;
+        SrsAutoFree(SrsTsMessage, msg);
+        queue.erase(it);
+        
         if (msg->channel->stream == SrsTsStreamVideoH264) {
             nb_videos--;
         }
-        queue.erase(it);
         
         // parse the stream.
         SrsStream avs;
@@ -936,6 +938,7 @@ int SrsIngestSrsOutput::flush_message_queue()
         std::multimap<int64_t, SrsTsMessage*>::iterator it = queue.begin();
         
         SrsTsMessage* msg = it->second;
+        SrsAutoFree(SrsTsMessage, msg);
         queue.erase(it);
         
         // parse the stream.
@@ -1237,7 +1240,7 @@ int SrsIngestSrsOutput::connect()
         }
         
         srs_discovery_tc_url(req->tcUrl,
-            req->schema, req->host, req->vhost, req->app, req->port,
+            req->schema, req->host, req->vhost, req->app, req->stream, req->port,
             req->param);
     }
     
